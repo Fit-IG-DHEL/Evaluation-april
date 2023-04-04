@@ -11,10 +11,13 @@ if(isset($_GET['id'])){
 	<form action="" id="manage-academic">
 		<input type="hidden" name="id" value="<?php echo isset($id) ? $id : '' ?>">
 		<div id="msg" class="form-group"></div>
+		
 		<div class="form-group">
-			<label for="year" class="control-label">Year</label>
-			<input type="text" class="form-control form-control-sm" name="year" id="year" value="<?php echo isset($year) ? $year : '' ?>" placeholder="(2019-2020)" required>
-		</div>
+		<label for="year" class="control-label">>Year:</label>
+    <select  class="form-control form-control-sm" id="myYear" name="year" >
+    
+    </select>
+	</div>
 		<div class="form-group">
     <label for="semester" class="control-label">Semester</label>
     <select class="form-control form-control-sm" name="semester" id="semester" required>
@@ -39,12 +42,22 @@ if(isset($_GET['id'])){
 	</form>
 </div>
 <script>
+  if(typeof yearindatabse === 'undefined'){
+	let yearindatabase = '';
+}
+	
+	</script>
+<?php echo isset($year) ? '<script> yearindatabse = "'.$year.'"</script>' : "<script> yearindatabse = ''</script>" ?>
+
+<script>
+	
 	$(document).ready(function(){
 		$('#manage-academic').submit(function(e){
 			e.preventDefault();
 			start_load()
 			$('#msg').html('')
 			$.ajax({
+
 				url:'ajax.php?action=save_academic',
 				method:'POST',
 				data:$(this).serialize(),
@@ -61,6 +74,41 @@ if(isset($_GET['id'])){
 				}
 			})
 		})
+
+		function updateSchoolYear() {
+      // Get the selected year from the input field
+      let year = document.getElementById("myYear").value;
+      
+      // Update the input field to show the school year range
+      let startYear = parseInt(year);
+      let schoolYear = startYear + "-" + (startYear + 1);
+      document.getElementById("myYear").value = schoolYear;
+    }
+ 
+	
+    // Generate options for the next 10 school years
+    for (let i = 0; i < 10; i++) {
+      
+		console.log(yearindatabse);
+      
+      let startYear = new Date('2022').getFullYear() + i;
+      let schoolYear = startYear + "-" + (startYear + 1);
+	  let flag = false;
+	  if(yearindatabse ==  schoolYear) {
+		
+		 flag = true;
+	}
+      let option = new Option(schoolYear, schoolYear,flag,flag);
+      
+    
+
+      document.getElementById("myYear").add(option);
+    }
+    
+    // Listen for the "change" event on the input field
+    document.getElementById("myYear").addEventListener("change", updateSchoolYear);
+
+
 	})
 
 </script>

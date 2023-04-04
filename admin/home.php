@@ -25,7 +25,6 @@ $astat = array("Not Yet Started","On-going","Closed");
 box-shadow: 2px 2px 0 0 white, 6px 6px 6px 0 #0f172a!important;
   transform: translate(-2px,2px)!important;
 }
-
  </style>
  <div class="col-12">
     <div class="card">
