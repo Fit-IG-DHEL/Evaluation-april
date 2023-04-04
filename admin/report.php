@@ -34,6 +34,7 @@ function ordinal_suffix($num){
 			</div>
 		</div>
 	</div>
+	
 	<div class="row">
 		<div class="col-md-12 mb-1">
 			<div class="d-flex justify-content-end w-100">
@@ -189,7 +190,6 @@ function ordinal_suffix($num){
 						$('#tse').text('')
 						$('#print-btn').hide() 
 						$('#pdf-btn').hide() 
-				console.log('tunay');
 					}else{
 						$('#class-list').html('')
 						Object.keys(resp).map(k=>{
