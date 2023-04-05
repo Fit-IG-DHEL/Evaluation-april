@@ -126,6 +126,7 @@ include '../db_connect.php';
 		</div>
 	</form>
 </div>
+<div class="warnings102"></div>
 <script>
 
 		function removetolist(e) {
@@ -246,7 +247,21 @@ include '../db_connect.php';
 					}
 				})
 			}else{
-			alert('Data saving will not work because there are duplicates : ( ')
+				const elll = document.createElement('div')
+				elll.classList.add('alert','alert-warning','alert-dismissible','fade','show')
+				elll.role = 'alert'
+				elll.style.csstext = `position:fixed;top:3rem;right:5rem;` 
+				elll.innerHTML = `
+Cannot save data because duplicates were found in the input. Please remove the duplicate entries and try again.
+  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+    <span aria-hidden="true">&times;</span>
+  </button>
+`;
+			document.querySelector('.warnings102').append(elll)
+			setTimeout(() => {
+				$('.alert').alert('close')
+				document.querySelector('.warnings102').innerHtml = '';
+			}, 4000);
 
 			}
 		})
