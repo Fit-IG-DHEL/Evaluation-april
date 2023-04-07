@@ -155,12 +155,10 @@ where academic_id ={$_SESSION['academic']['id']} and student_id = {$_SESSION['lo
 			uni_modal("Information","<?php echo $_SESSION['login_view_folder'] ?>not_started.php")
 		}else if('<?php echo $_SESSION['academic']['status'] ?>' == 2){
 			uni_modal("Information","<?php echo $_SESSION['login_view_folder'] ?>closed.php")
+		}else if(lengthss == 0){
+			uni_modal("Information","<?php echo $_SESSION['login_view_folder'] ?>done.php")
+
 		}
-		else if('<?php echo $_SESSION['academic']['status'] ?>' == 2){
-			uni_modal("Information","<?php echo $_SESSION['login_view_folder'] ?>closed.php")
-		}
-		if(lengthss == 0)
-		uni_modal("Information","<?php echo $_SESSION['login_view_folder'] ?>done.php")
 	})
 	$('#manage-evaluation').submit(function(e){
 		e.preventDefault();

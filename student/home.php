@@ -10,7 +10,7 @@ function ordinal_suffix1($num){
     }
     return $num.'th';
 }
-$astat = array("Not Yet Started","Started","Closed");
+$astat = array("Not Yet Started","On-going","Closed");
  ?>
 
 <div class="col-12">
@@ -21,7 +21,7 @@ $astat = array("Not Yet Started","Started","Closed");
         <div class="col-md-5">
           <div class="callout callout-info">
             <h5><b>Academic Year: <?php echo $_SESSION['academic']['year'].' '.(ordinal_suffix1($_SESSION['academic']['semester'])) ?> Semester</b></h5>
-            <h6><b>Evaluation Status: <?php echo $astat[$_SESSION['academic']['status']] ?></b></h6>
+            <h6><b>System Evaluation Status: <?php echo $astat[$_SESSION['academic']['status']] ?></b></h6>
           </div>
         </div>
       </div>

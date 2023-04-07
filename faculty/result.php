@@ -40,7 +40,7 @@ function ordinal_suffix($num){
 						<td></td>
 					</tr>
 					<tr>
-						<td width="50%"><p><b>Class: <span id="classField"></span></b></p></td>
+						<!-- <td width="50%"><p><b>Class: <span id="classField"></span></b></p></td> -->
 						<td width="50%"><p><b>Subject: <span id="subjectField"></span></b></p></td>
 					</tr>
 			</table>
@@ -145,7 +145,7 @@ function ordinal_suffix($num){
 					}else{
 						$('#class-list').html('')
 						Object.keys(resp).map(k=>{
-						$('#class-list').append('<a href="javascript:void(0)" data-json=\''+JSON.stringify(resp[k])+'\' data-id="'+resp[k].id+'" class="list-group-item list-group-item-action show-result">'+resp[k].class+' - '+resp[k].subj+'</a>')
+						$('#class-list').append('<a href="javascript:void(0)" data-json=\''+JSON.stringify(resp[k])+'\' data-id="'+resp[k].id+'" class="list-group-item list-group-item-action show-result">'+resp[k].subj+'</a>')
 						})
 
 					}

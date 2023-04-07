@@ -907,12 +907,14 @@ class Action
 				return 1;
 		}
 	}
+	//query for get class by class 
+	// SELECT c.id,concat(c.curriculum,' ',c.level,' - ',c.section) as class,s.id as sid,concat(s.code,' - ',s.subject) as subj FROM restriction_list r1,class_list c,subject_list s where c.id = r1.class_id and s.id = r1.subject_id and r1.faculty_id = {$fid} and r1.academic_id = {$_SESSION['academic']['id']} union SELECT c.id,concat(c.curriculum,' ',c.level,' - ',c.section) as class,s.id as sid,concat(s.code,' - ',s.subject) as subj from restriction_list2 r2 ,class_list c,subject_list s,faculty_list fl where c.id = r2.class_id and r2.academic_id = {$_SESSION['academic']['id']} and fl.id = {$fid} and fl.id in (SELECT asss.instructor_ID from restriction_list2 r2,assignedsubjects asss where find_in_set(asss.subject_ID,r2.subject_ids) > 0 and r2.academic_id = {$_SESSION['academic']['id']} and asss.instructor_ID = {$fid}) and s.id in (SELECT asss.subject_ID from restriction_list2 r2,assignedsubjects asss where find_in_set(asss.subject_ID,r2.subject_ids) > 0 and r2.academic_id = {$_SESSION['academic']['id']} and asss.instructor_ID = {$fid});
 
 	function get_class()
 	{
 		extract($_POST);
 		$data = array();
-		 $get = $this->db->query("SELECT c.id,concat(c.curriculum,' ',c.level,' - ',c.section) as class,s.id as sid,concat(s.code,' - ',s.subject) as subj FROM restriction_list r1,class_list c,subject_list s where c.id = r1.class_id and s.id = r1.subject_id and r1.faculty_id = {$fid} and r1.academic_id = {$_SESSION['academic']['id']} union SELECT c.id,concat(c.curriculum,' ',c.level,' - ',c.section) as class,s.id as sid,concat(s.code,' - ',s.subject) as subj from restriction_list2 r2 ,class_list c,subject_list s,faculty_list fl where c.id = r2.class_id and r2.academic_id = {$_SESSION['academic']['id']} and fl.id = {$fid} and fl.id in (SELECT asss.instructor_ID from restriction_list2 r2,assignedsubjects asss where find_in_set(asss.subject_ID,r2.subject_ids) > 0 and r2.academic_id = {$_SESSION['academic']['id']} and asss.instructor_ID = {$fid}) and s.id in (SELECT asss.subject_ID from restriction_list2 r2,assignedsubjects asss where find_in_set(asss.subject_ID,r2.subject_ids) > 0 and r2.academic_id = {$_SESSION['academic']['id']} and asss.instructor_ID = {$fid});");
+		 $get = $this->db->query("SELECT s.id as sid,concat(s.code,' - ',s.subject) as subj FROM restriction_list r1,subject_list s where s.id = r1.subject_id and r1.faculty_id = {$fid} and r1.academic_id = {$_SESSION['academic']['id']} union SELECT s.id as sid,concat(s.code,' - ',s.subject) as subj from restriction_list2 r2,subject_list s,faculty_list fl where r2.academic_id = {$_SESSION['academic']['id']} and fl.id = {$fid} and fl.id in (SELECT asss.instructor_ID from restriction_list2 r2,assignedsubjects asss where find_in_set(asss.subject_ID,r2.subject_ids) > 0 and r2.academic_id = {$_SESSION['academic']['id']} and asss.instructor_ID = {$fid}) and s.id in (SELECT asss.subject_ID from restriction_list2 r2,assignedsubjects asss where find_in_set(asss.subject_ID,r2.subject_ids) > 0 and r2.academic_id = {$_SESSION['academic']['id']} and asss.instructor_ID = {$fid});");
 	
 		while ($row = $get->fetch_assoc()) {
 			$data[] =  $row;
@@ -922,11 +924,15 @@ class Action
 	function get_report()
 	{
 		extract($_POST);
-		
-		$data = array();
-		$get = $this->db->query("SELECT * FROM evaluation_answers where evaluation_id in (SELECT evaluation_id FROM evaluation_list where academic_id = {$_SESSION['academic']['id']} and faculty_id = $faculty_id and subject_id = $subject_id and class_id = $class_id )");
 
-		$answered = $this->db->query("SELECT * FROM evaluation_list where academic_id = {$_SESSION['academic']['id']} and faculty_id = $faculty_id and subject_id = $subject_id and class_id = $class_id");
+		$data = array();
+		//before query get answer
+		// SELECT * FROM evaluation_answers where evaluation_id in (SELECT evaluation_id FROM evaluation_list where academic_id = {$_SESSION['academic']['id']} and faculty_id = $faculty_id and subject_id = $subject_id and class_id = $class_id )
+		
+		$get = $this->db->query("SELECT * FROM evaluation_answers where evaluation_id in (SELECT evaluation_id FROM evaluation_list where academic_id = {$_SESSION['academic']['id']} and faculty_id = $faculty_id and subject_id = $subject_id)");
+		//before query for get eval
+		// SELECT * FROM evaluation_list where academic_id = {$_SESSION['academic']['id']} and faculty_id = $faculty_id and subject_id = $subject_id and class_id = $class_id
+		$answered = $this->db->query("SELECT * FROM evaluation_list where academic_id = {$_SESSION['academic']['id']} and faculty_id = $faculty_id and subject_id = $subject_id");
 		$rate = array();
 		while ($row = $get->fetch_assoc()) {
 			if (!isset($rate[$row['question_id']][$row['rate']]))
