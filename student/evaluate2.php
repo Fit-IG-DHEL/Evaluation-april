@@ -36,7 +36,7 @@ and academic_id = {$_SESSION['academic']['id']} and class_id = {$_SESSION['login
         -ms-transform: translate(7.75px, 8px) rotate(45deg) !important;
 	}
       .p-1 {
-        display:flex !important;
+        margin-right: 4rem;
         flex-direction:column  !important;
     }
     @media screen and (max-width: 600px) {
