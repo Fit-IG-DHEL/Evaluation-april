@@ -391,17 +391,21 @@ class Action
 	{
 		extract($_POST);
 		$data = "";
+		$data_arr = Array();
 		foreach ($_POST as $k => $v) {
 			if (!in_array($k, array('id', 'user_ids')) && !is_numeric($k)) {
+				array_push($data_arr ,$v);
 				if (empty($data)) {
+					
 					$data .= " $k='$v' ";
 				} else {
 					$data .= ", $k='$v' ";
 				}
 			}
 		}
-		$chk = $this->db->query("SELECT * FROM academic_list where (" . str_replace(",", 'and', $data) . ") and id != '{$id}' ")->num_rows;
-		if ($chk > 0) {
+		$chk = $this->db->query("SELECT * FROM academic_list where ( `year` ='{$data_arr[0]}' and `semester`='{$data_arr[1]}') and `id` != '{$id}' ")->num_rows;
+		
+		if($chk != 0) {
 			return 2;
 		}
 		$hasDefault = $this->db->query("SELECT * FROM academic_list where is_default = 1")->num_rows;
@@ -414,7 +418,7 @@ class Action
 			$save = $this->db->query("UPDATE academic_list set $data where id = $id");
 		}
 		if ($save) {
-			return 1;
+		  return 1;
 		}
 	}
 	function delete_academic()

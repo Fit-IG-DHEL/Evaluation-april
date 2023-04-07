@@ -13,7 +13,7 @@ if(isset($_GET['id'])){
 		<div id="msg" class="form-group"></div>
 		
 		<div class="form-group">
-		<label for="year" class="control-label">>Year:</label>
+		<label for="year" class="control-label">Year:</label>
     <select  class="form-control form-control-sm" id="myYear" name="year" >
     
     </select>
@@ -63,6 +63,7 @@ if(isset($_GET['id'])){
 				data:$(this).serialize(),
 				success:function(resp){
 					if(resp == 1){
+
 						alert_toast("Data successfully saved.","success");
 						setTimeout(function(){
 							location.reload()	
@@ -89,7 +90,6 @@ if(isset($_GET['id'])){
     // Generate options for the next 10 school years
     for (let i = 0; i < 10; i++) {
       
-		console.log(yearindatabse);
       
       let startYear = new Date('2022').getFullYear() + i;
       let schoolYear = startYear + "-" + (startYear + 1);
