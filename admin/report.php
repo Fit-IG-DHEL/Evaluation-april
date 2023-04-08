@@ -190,9 +190,14 @@ function ordinal_suffix($num){
 						$('#tse').text('')
 						$('#print-btn').hide() 
 						$('#pdf-btn').hide() 
+
+
+
+						
 					}else{
 						$('#class-list').html('')
 						Object.keys(resp).map(k=>{
+
 						$('#class-list').append('<a href="javascript:void(0)" data-json=\''+JSON.stringify(resp[k])+'\' data-id="'+resp[k].id+'" class="list-group-item list-group-item-action show-result">'+resp[k].subj+'</a>')
 						})
 

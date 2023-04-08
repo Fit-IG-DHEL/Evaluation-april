@@ -352,8 +352,10 @@ class Action
 	{
 		extract($_POST);
 		$data = "";
+		$data_arr = Array();
 		foreach ($_POST as $k => $v) {
 			if (!in_array($k, array('id', 'user_ids')) && !is_numeric($k)) {
+				array_push($data_arr ,$v);
 				if (empty($data)) {
 					$data .= " $k='$v' ";
 				} else {
@@ -361,8 +363,13 @@ class Action
 				}
 			}
 		}
-		$chk = $this->db->query("SELECT * FROM class_list where (" . str_replace(",", 'and', $data) . ") and id != '{$id}' ")->num_rows;
+		$chk = $this->db->query("SELECT * FROM class_list where ( `curriculum` ='{$data_arr[0]}' and `level`='{$data_arr[1]}' and `section`='{$data_arr[2]}') and `id` != '{$id}' ")->num_rows;
+		if(empty($data_arr[0]) || empty($data_arr[1]) || empty($data_arr[2])) {
+			
+			return 3;
+		}
 		if ($chk > 0) {
+			
 			return 2;
 		}
 		if (isset($user_ids)) {
@@ -374,6 +381,7 @@ class Action
 			$save = $this->db->query("UPDATE class_list set $data where id = $id");
 		}
 		if ($save) {
+			
 			return 1;
 		}
 	}

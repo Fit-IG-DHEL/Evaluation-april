@@ -38,6 +38,7 @@ if(isset($_GET['id'])){
 				data:$(this).serialize(),
 				success:function(resp){
 					if(resp == 1){
+						
 						alert_toast("Data successfully saved.","success");
 						setTimeout(function(){
 							location.reload()	
@@ -46,6 +47,12 @@ if(isset($_GET['id'])){
 						$('#msg').html('<div class="alert alert-danger"><i class="fa fa-exclamation-triangle"></i> Class already exist.</div>')
 						end_load()
 					}
+					else if(resp == 3){
+		
+						$('#msg').html('<div class="alert alert-danger"><i class="fa fa-exclamation-triangle"></i> Do it Again! </div>')
+						end_load()
+					}
+					
 				}
 			})
 		})
