@@ -12,12 +12,28 @@ if(isset($_GET['id'])){
 		<input type="hidden" name="id" value="<?php echo isset($id) ? $id : '' ?>">
 		<div id="msg" class="form-group"></div>
 		
-		<div class="form-group">
+		<!-- <div class="form-group">
 		<label for="year" class="control-label">Year:</label>
-    <select  class="form-control form-control-sm" id="myYear" name="year" >
+		<input type="text" class="form-control " id="myYear" name="year" list="listofyear" >
+    <datalist id="listofyear" name="myYear" >
+
+   
+	</datalist>
+	</div> -->
+
+	<div class="form-group"> <!-- Create the input field with auto-suggestion -->
+	<label for="year" class="control-label">Year:</label><input id="semester-year" name="semester-year" type="text" class="form-control"> 
+        <!-- Create a dropdown list for the suggestions -->
+        <div class="dropdown mt-2">
+            <ul id="suggestions"></ul>
+        </div>
+    </div>
+	<!-- <div class="form-group">
+		<label for="year" class="control-label">Year:</label>
+       <select  class="form-control form-control-sm" id="myYear" name="year" >
     
-    </select>
-	</div>
+        </select>
+	</div> -->
 		<div class="form-group">
     <label for="semester" class="control-label">Semester</label>
     <select class="form-control form-control-sm" name="semester" id="semester" required>
@@ -72,43 +88,97 @@ if(isset($_GET['id'])){
 						$('#msg').html('<div class="alert alert-danger"><i class="fa fa-exclamation-triangle"></i> academic Code already exist.</div>')
 						end_load()
 					}
+					else if(resp == 3){
+						$('#msg').html('<div class="alert alert-danger"><i class="fa fa-exclamation-triangle"></i>Fill-out the input field</div>')
+						end_load()
+					}
 				}
 			})
 		})
 
-		function updateSchoolYear() {
-      // Get the selected year from the input field
-      let year = document.getElementById("myYear").value;
-      
-      // Update the input field to show the school year range
-      let startYear = parseInt(year);
-      let schoolYear = startYear + "-" + (startYear + 1);
-      document.getElementById("myYear").value = schoolYear;
-    }
- 
-	
-    // Generate options for the next 10 school years
-    for (let i = 0; i < 10; i++) {
-      
-      
-      let startYear = new Date('2022').getFullYear() + i;
-      let schoolYear = startYear + "-" + (startYear + 1);
-	  let flag = false;
-	  if(yearindatabse ==  schoolYear) {
 		
-		 flag = true;
-	}
-      let option = new Option(schoolYear, schoolYear,flag,flag);
-      
-    
 
-      document.getElementById("myYear").add(option);
-    }
-    
-    // Listen for the "change" event on the input field
-    document.getElementById("myYear").addEventListener("change", updateSchoolYear);
+		function suggestYears() {
+            // Get the user input
+            const input = this.value;
+
+            // Parse the year input as an integer
+            const inputYear = parseInt(input);
+
+            // If the input is 1 to 4 digits, add zeroes to make it a valid year
+            if (!isNaN(inputYear) && input.length < 4) {
+                const yearString = input.padEnd(4, '0');
+                const year = parseInt(yearString);
+                if (year >= 1900 && year <= 2100) {
+                    console.log(year);
+                    const label = generateY(year);
+                    populateDropdown(label);
+                    return;
+                }
+            }
+
+            // Check if the input is a valid year
+            if (isNaN(inputYear) || inputYear < 1900 || inputYear > 2100) {
+                clearDropdown();
+                return;
+            }
+
+            // Filter the year options based on the user input
+            const matchingYears = generateY(inputYear).filter(label => label.startsWith(input));
+
+            // Populate the dropdown list with the filtered year options
+            populateDropdown(matchingYears);
+        }
+
+        // Generate up to 10 year labels based on the input year
+        function generateY(inputYear) {
+            const filteredYears = [];
+            for (let i = 0; i < 5; i++) {
+                const year = inputYear + i;
+                const label = `${year}-${year + 1}`;
+                filteredYears.push(label);
+            }
+            return filteredYears;
+        }
+
+        // Populate the dropdown list with the given year labels
+        function populateDropdown(years) {
+            // Clear the existing dropdown items
+            clearDropdown();
+
+            // Add the year options to the dropdown menu
+            const dropdown = document.getElementById('suggestions');
+            years.forEach(year => {
+             
+              
+                const item = document.createElement('li');
+                item.textContent = year;
+                
+                dropdown.appendChild(item);
+                item.addEventListener('click', () => {
+                    // Set the input field value to the selected year
+                    document.getElementById('semester-year').value = year;
+                    // Clear the dropdown menu
+                    clearDropdown();
+                });
+                dropdown.appendChild(item);
+            });
+        }
+
+        // Clear the dropdown list
+        function clearDropdown() {
+            const dropdown = document.getElementById('suggestions');
+            dropdown.innerHTML = '';
+        }
+
+        // Attach the suggestion function to the input field
+        const input = document.getElementById('semester-year');
+        input.addEventListener('input', suggestYears);
+
+
+
 
 
 	})
-
+	
 </script>
