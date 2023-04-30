@@ -1,16 +1,19 @@
-
-<?php $faculty_id = isset($_GET['fid']) ? $_GET['fid'] : '' ; ?>
-<?php 
-function ordinal_suffix($num){
-    $num = $num % 100; // protect against large numbers
-    if($num < 11 || $num > 13){
-         switch($num % 10){
-            case 1: return $num.'st';
-            case 2: return $num.'nd';
-            case 3: return $num.'rd';
-        }
-    }
-    return $num.'th';
+<?php $faculty_id = isset($_GET['fid']) ? $_GET['fid'] : ''; ?>
+<?php
+function ordinal_suffix($num)
+{
+	$num = $num % 100; // protect against large numbers
+	if ($num < 11 || $num > 13) {
+		switch ($num % 10) {
+			case 1:
+				return $num . 'st';
+			case 2:
+				return $num . 'nd';
+			case 3:
+				return $num . 'rd';
+		}
+	}
+	return $num . 'th';
 }
 ?>
 <div class="col-lg-12">
@@ -18,29 +21,29 @@ function ordinal_suffix($num){
 		<div class="d-flex w-100 justify-content-center align-items-center">
 			<label for="faculty">Select Faculty</label>
 			<div class=" mx-2 col-md-4">
-			<select name="" id="faculty_id" class="form-control form-control-sm select2">
-				<option value=""></option>
-				<?php 
-				$faculty = $conn->query("SELECT *,concat(firstname,' ',lastname) as name FROM faculty_list order by concat(firstname,' ',lastname) asc");
-				$f_arr = array();
-				$fname = array();
-				while($row=$faculty->fetch_assoc()):
-					$f_arr[$row['id']]= $row;
-					$fname[$row['id']]= ucwords($row['name']);
-				?>
-				<option value="<?php echo $row['id'] ?>" <?php echo isset($faculty_id) && $faculty_id == $row['id'] ? "selected" : "" ?>><?php echo ucwords($row['name']) ?></option>
-				<?php endwhile; ?>
-			</select>
+				<select name="" id="faculty_id" class="form-control form-control-sm select2">
+					<option value=""></option>
+					<?php
+					$faculty = $conn->query("SELECT *,concat(firstname,' ',lastname) as name FROM faculty_list order by concat(firstname,' ',lastname) asc");
+					$f_arr = array();
+					$fname = array();
+					while ($row = $faculty->fetch_assoc()) :
+						$f_arr[$row['id']] = $row;
+						$fname[$row['id']] = ucwords($row['name']);
+					?>
+						<option value="<?php echo $row['id'] ?>" <?php echo isset($faculty_id) && $faculty_id == $row['id'] ? "selected" : "" ?>><?php echo ucwords($row['name']) ?></option>
+					<?php endwhile; ?>
+				</select>
 			</div>
 		</div>
 	</div>
-	
+
 	<div class="row">
 		<div class="col-md-12 mb-1">
 			<div class="d-flex justify-content-end w-100">
-				
-			
-			<button class="btn btn-sm btn-success bg-gradient-success" style="display:none;margin-right:5px" id="pdf-btn"><i class="fas fa-download"></i> Download PDF file</button>
+
+
+				<button class="btn btn-sm btn-success bg-gradient-success" style="display:none;margin-right:5px" id="pdf-btn"><i class="fas fa-download"></i> Download PDF file</button>
 				<button class="btn btn-sm btn-success bg-gradient-success" style="display:none" id="print-btn"><i class="fa fa-print"></i> Print</button>
 			</div>
 		</div>
@@ -49,278 +52,506 @@ function ordinal_suffix($num){
 		<div class="col-md-3">
 			<div class="callout callout-info">
 				<div class="list-group mushi" id="class-list">
-					
+
 				</div>
 			</div>
 		</div>
 		<div class="col-md-9">
 			<div class="callout callout-info" id="printable">
 				<div class="callout callout-info" id="Pdf-file">
-			<div>
-			<h3 class="text-center">Evaluation Report</h3>
-			<hr>
-			<table id='expo' width="100%">
-					<tr>
-						<td width="50%"><p><b>Faculty: <span id="fname"></span></b></p></td>
-						<td width="50%"><p><b>Academic Year: <span id="ay"><?php echo $_SESSION['academic']['year'].' '.(ordinal_suffix($_SESSION['academic']['semester'])) ?> Semester</span></b></p></td>
-					</tr>
-					<tr>
-						<!-- <td width="50%"><p><b>Class: <span id="classField"></span></b></p></td> -->
-						<td width="50%"><p><b>Subject: <span id="subjectField"></span></b></p></td>
-					</tr>
-			</table>
-				<p class=""><b>Total Student Evaluated: <span id="tse"></span></b></p>
-			</div>
-				<fieldset class="border border-info p-2 w-100">
-				   <legend  class="w-auto">Rating Legend</legend>
-				   <p>5 = Strongly Agree, 4 = Agree, 3 = Uncertain, 2 = Disagree, 1 = Strongly Disagree</p>
-				</fieldset>
-				<?php 
-							$q_arr = array();
-						$criteria = $conn->query("SELECT * FROM criteria_list where id in (SELECT criteria_id FROM question_list where academic_id = {$_SESSION['academic']['id']} ) order by abs(order_by) asc ");
-						while($crow = $criteria->fetch_assoc()):
-					?>
-					<table class="table table-condensed wborder" id = "pdftable">
-						<thead>
-							<tr class="bg-gradient-secondary">
-								<th class=" p-1"><b><?php echo $crow['criteria'] ?></b></th>
-								<th width="5%" class="text-center">1</th>
-								<th width="5%" class="text-center">2</th>
-								<th width="5%" class="text-center">3</th>
-								<th width="5%" class="text-center">4</th>
-								<th width="5%" class="text-center">5</th>
+					<div>
+						<h3 class="text-center">Evaluation Report</h3>
+						<hr>
+						<table id='expo' width="100%">
+							<tr>
+								<td width="50%">
+									<p><b>Faculty: <span id="fname"></span></b></p>
+								</td>
+								<td width="50%">
+									<p><b>Academic Year: <span id="ay"><?php echo $_SESSION['academic']['year'] . ' ' . (ordinal_suffix($_SESSION['academic']['semester'])) ?> Semester</span></b></p>
+								</td>
 							</tr>
-						</thead>
-						<tbody class="tr-sortable">
-							<?php 
-							$questions = $conn->query("SELECT * FROM question_list where criteria_id = {$crow['id']} and academic_id = {$_SESSION['academic']['id']} order by abs(order_by) asc ");
-							while($row=$questions->fetch_assoc()):
-							$q_arr[$row['id']] = $row;
-							?>
+							<tr>
+								<p class=""><b> <span id="ratings"></span></b></p>
+							</tr>
+							<tr>
+								<!-- <td width="50%"><p><b>Class: <span id="classField"></span></b></p></td> -->
+								<td width="50%">
+									<p><b>Subject: <span id="subjectField"></span></b></p>
+								</td>
+							</tr>
+						</table>
+						<p class=""><b>Total Student Evaluated: <span id="tse"></span></b></p>
+					</div>
+					<fieldset class="border border-info p-2 w-100">
+						<legend class="w-auto">Overall Ratings</legend>
+						<table class="table table-condensed wborder"  >
+
 							<tr class="bg-white">
-								<td class="p-1" width="40%">
-									<?php echo $row['question'] ?>
-								</td>
-								<?php for($c=1;$c<=5;$c++): ?>
-								<td class="text-center">
-									<span class="rate_<?php echo $c.'_'.$row['id'] ?> rates"></span>
-			                      </div>
-								</td>
-								<?php endfor; ?>
+								<th>5.Strongly-agree</th>
+								<th>4.Agree </th>
+								<th>3.Uncertain </th>
+								<th>2.Disagree </th>
+								<th>1.Strongly-disagree </th>
 							</tr>
-							<?php endwhile; ?>
-						</tbody>
-					</table>
-					<?php endwhile; ?>
+
+
+							<tr class="bg-white" id="show-table" >
+
+								<td id="strongly-agree"></td>
+								<td id="agree"></td>
+								<td id="uncertain"></td>
+								<td id="disagree"></td>
+								<td id="strongly-disagree"></td>
+							</tr>
+
+						</table>
+
+					</fieldset>
+					<?php
+					$q_arr = array();
+					$criteria = $conn->query("SELECT * FROM criteria_list where id in (SELECT criteria_id FROM question_list where academic_id = {$_SESSION['academic']['id']} ) order by abs(order_by) asc ");
+					while ($crow = $criteria->fetch_assoc()) :
+					?>
+						<table class="table table-condensed wborder" id='grand-parent'>
+							<thead>
+								<tr class="bg-gradient-secondary">
+									<th class=" p-1"><b><?php echo $crow['criteria'] ?></b></th>
+									<th width="5%" class="text-center">1</th>
+									<th width="5%" class="text-center">2</th>
+									<th width="5%" class="text-center">3</th>
+									<th width="5%" class="text-center">4</th>
+									<th width="5%" class="text-center">5</th>
+								</tr>
+							</thead>
+							<tbody class="tr-sortable">
+								<?php
+
+								// 	$q =  $conn->query("SELECT * FROM question_list");
+								// 	$row = $q->fetch_assoc();
+								//    echo $row['criteria_id'];
+
+								$questions = $conn->query("SELECT * FROM question_list where criteria_id = {$crow['id']} and academic_id = {$_SESSION['academic']['id']} order by abs(order_by) asc ");
+								while ($row = $questions->fetch_assoc()) :
+
+									$q_arr[$row['id']] = $row;
+								?>
+									<tr class="bg-white">
+										<td class="p-1" width="40%">
+											<?php  echo $row['question']?>
+										</td>
+										<?php for ($c = 1; $c <= 5; $c++) : ?>
+											<td class="text-center">
+												<span class="rate_<?php echo $c . '_' . $row['id'] ?> rates"></span>
+				</div>
+				</td>
+
+			<?php endfor; ?>
+			</tr>
+
+		<?php endwhile; ?>
+		</tbody>
+		</table>
+	<?php endwhile; ?>
 			</div>
 		</div>
 	</div>
 </div>
 <style>
-	.list-group-item:hover{
+	.list-group-item:hover {
 		color: black !important;
 		font-weight: 700 !important;
 	}
 </style>
 <noscript>
 	<style>
-		table{
-			width:100%;
+		table {
+			width: 100%;
 			border-collapse: collapse;
 		}
-		table.wborder tr,table.wborder td,table.wborder th{
-			border:1px solid gray;
+
+		table.wborder tr,
+		table.wborder td,
+		table.wborder th {
+			border: 1px solid gray;
 			padding: 3px
 		}
-		table.wborder thead tr{
-			background: #6c757d linear-gradient(180deg,#828a91,#6c757d) repeat-x!important;
-    		color: #fff;
+
+		table.wborder thead tr {
+			background: #6c757d linear-gradient(180deg, #828a91, #6c757d) repeat-x !important;
+			color: #fff;
 		}
-		.text-center{
-			text-align:center;
-		} 
-		.text-right{
-			text-align:right;
-		} 
-		.text-left{
-			text-align:left;
-		} 
+
+		.text-center {
+			text-align: center;
+		}
+
+		.text-right {
+			text-align: right;
+		}
+
+		.text-left {
+			text-align: left;
+		}
 	</style>
 </noscript>
 <script>
+	$(document).ready(function() {
 
 
-	$(document).ready(function(){
-	  
-
-		$('#faculty_id').change(function(){
-			if($(this).val() > 0)
-			window.history.pushState({}, null, './index.php?page=report&fid='+$(this).val());
+		$('#faculty_id').change(function() {
+			if ($(this).val() > 0)
+				window.history.pushState({}, null, './index.php?page=report&fid=' + $(this).val());
 			load_class()
-		
+
 		})
-		if($('#faculty_id').val() > 0)
+		if ($('#faculty_id').val() > 0)
 			load_class()
 
-			
+
 
 	})
-	function load_class(){
+
+	function load_class() {
 		start_load()
 		var fname = <?php echo json_encode($fname) ?>;
 		$('#fname').text(fname[$('#faculty_id').val()])
 		$.ajax({
-			url:"ajax.php?action=get_class",
-			method:'POST',
-			data:{fid:$('#faculty_id').val()},
-			error:function(err){
+			url: "ajax.php?action=get_class",
+			method: 'POST',
+			data: {
+				fid: $('#faculty_id').val()
+			},
+			error: function(err) {
 				console.log(err)
-				alert_toast("An error occured",'error')
+				alert_toast("An error occured", 'error')
 				end_load()
 			},
-			success:function(resp){
-				
-				
+			success: function(resp) {
+
+
 				console.log(resp);
-				if(resp){
+				if (resp) {
 					resp = JSON.parse(resp)
-					if(Object.keys(resp).length <= 0 ){
+					
+					if (Object.keys(resp).length <= 0) {
 						$('#class-list').html('<a href="javascript:void(0)" class="list-group-item list-group-item-action disabled">No data to be display.</a>')
 						$('.rates').text('')
 						$('#tse').text('')
-						$('#print-btn').hide() 
-						$('#pdf-btn').hide() 
+						$('#show-table').hide()
+						$('#print-btn').hide()
+						$('#pdf-btn').hide()
 
 
 
-						
-					}else{
+
+					} else {
 						$('#class-list').html('')
-						Object.keys(resp).map(k=>{
+						Object.keys(resp).map(k => {
 
-						$('#class-list').append('<a href="javascript:void(0)" data-json=\''+JSON.stringify(resp[k])+'\' data-id="'+resp[k].id+'" class="list-group-item list-group-item-action show-result">'+resp[k].subj+'</a>')
+							$('#class-list').append('<a href="javascript:void(0)" data-json=\'' + JSON.stringify(resp[k]) + '\' data-id="' + resp[k].id + '" class="list-group-item list-group-item-action show-result">' + resp[k].subj + '</a>')
 						})
 
 					}
 				}
 			},
-			complete:function(){
+			complete: function() {
 				end_load()
 				anchor_func()
-				if('<?php echo isset($_GET['rid']) ?>' == 1){
+				if ('<?php echo isset($_GET['rid']) ?>' == 1) {
 					$('.show-result[data-id="<?php echo isset($_GET['rid']) ? $_GET['rid'] : '' ?>"]').trigger('click')
-				}else{
+				} else {
 					$('.show-result').first().trigger('click')
 				}
 			}
 		})
 	}
-	function anchor_func(){
-		$('.show-result').click(function(){
-			var vars = [], hash;
+
+	function anchor_func() {
+		$('.show-result').click(function() {
+			var vars = [],
+				hash;
 			var data = $(this).attr('data-json')
 			console.log(data);
-				data = JSON.parse(data)
+			data = JSON.parse(data)
 			var _href = location.href.slice(window.location.href.indexOf('?') + 1).split('&');
-			for(var i = 0; i < _href.length; i++)
-				{
-					hash = _href[i].split('=');
-					vars[hash[0]] = hash[1];
-				}
-			window.history.pushState({}, null, './index.php?page=report&fid='+vars.fid+'&rid='+data.id);
-			load_report(vars.fid,data.sid,data.id);
+			for (var i = 0; i < _href.length; i++) {
+				hash = _href[i].split('=');
+				vars[hash[0]] = hash[1];
+			}
+			window.history.pushState({}, null, './index.php?page=report&fid=' + vars.fid + '&rid=' + data.id);
+			load_report(vars.fid, data.sid, data.id);
 			$('#subjectField').text(data.subj)
 			$('#classField').text(data.class)
 			$('.show-result.active').removeClass('active')
 			$(this).addClass('active')
 		})
 	}
-	function load_report($faculty_id, $subject_id,$class_id){
-	
-	
-		
 
-		if($('#preloader2').length <= 0)
-		start_load()
+	function load_report($faculty_id, $subject_id, $class_id) {
+
+
+
+
+		if ($('#preloader2').length <= 0)
+			start_load()
 		$.ajax({
-			url:'ajax.php?action=get_report',
-			method:"POST",
-			data:{faculty_id: $faculty_id,subject_id:$subject_id},
-			error:function(err){
+			url: 'ajax.php?action=get_report',
+			method: "POST",
+			data: {
+				faculty_id: $faculty_id,
+				subject_id: $subject_id
+			},
+			error: function(err) {
 				console.log(err)
-				alert_toast("An Error Occured.","error");
+				alert_toast("An Error Occured.", "error");
 				end_load()
 			},
-			success:function(resp){
-				if(resp){
-			console.log("get r : "+resp);
+			success: function(resp) {
+				if (resp) {
+										const parsedResponse = JSON.parse(resp);
+										let numoftse = parsedResponse.tse;
+										let datass = parsedResponse.data;
+
+					const sumMap = new Map();
+					
 
 					
+
+for (const key in datass) {
+  for (const subkey in datass[key]) {
+    const value = datass[key][subkey];
+    const sum = sumMap.get(subkey) || 0;
+    sumMap.set(subkey, sum + value);
+  }
+}
+console.log(sumMap);
+console.log( datass);
+// Loop through each table and get the number of tr elements in each tbody
+let totalquestions=0
+const gp = document.querySelectorAll("#grand-parent")
+gp.forEach(table => {
+  const tbodies = table.querySelector('tbody');
+  
+   
+    const trs = tbodies.querySelectorAll('tr');
+    totalquestions += trs.length
+    
+  
+});
+console.log(totalquestions);
+// Divide the value of sumMap into totalquestions
+let me = [];
+for (const [key, value] of sumMap) {
+  const avg = value / totalquestions;
+  console.log(`Average for ${key}: ${avg}`);
+me.push(`${avg}`)
+
+
+}
+const res = me.toFixed(2);
+
+document.getElementById("strongly-agree").innerText =  `${me[0]||0}%`;
+      document.getElementById("agree").innerText = `${me[1]||0}%`;
+      document.getElementById("uncertain").innerText = `${me[2]||0}%`;
+      document.getElementById("disagree").innerText = `${me[3]||0}%`;
+      document.getElementById("strongly-disagree").innerText = `${me[4]||0}%`;
+  
+
+
+					// console.log("get r : "+resp);
+					// console.log('numberofTSE: '+numoftse);
+
 					resp = JSON.parse(resp)
-					if(Object.keys(resp).length == 0){
+					if (Object.keys(resp).length == 0) {
 						$('.rates').text('')
 						$('#tse').text('')
 						$('#print-btn').hide()
 						$('#pdf-btn').hide()
-					}else{
+					} else {
 						$('#print-btn').show()
-						$('#pdf-btn').show()
+                        $('#show-table').show()
 						$('#tse').text(resp.tse)
 						$('.rates').text('-')
 						var data = resp.data
-						Object.keys(data).map(q=>{
-							Object.keys(data[q]).map(r=>{
-								console.log($('.rate_'+r+'_'+q),data[q][r])
+
+						Object.keys(data).map(q => {
+
+							Object.keys(data[q]).map(r => {
+								//number of categotres
+								// console.log(`${r} =total`);
+								// console.log(`${q} =total`);
+								// console.log($('.rate_' + r + '_' + q), data[q][r])
 								let dataqr = data[q][r]
-								$('.rate_'+r+'_'+q).text(parseFloat(dataqr.toFixed(2))+'%')
+								//percentage
+								// console.log(dataqr);
+								$('.rate_' + r + '_' + q).text(parseFloat(dataqr.toFixed(2)) + '%')
 							})
+
+
+							
+							
+
+							
+
+
+							
+						})
+
+
+
+						const pr = document.querySelectorAll('#grand-parent');
+
+						let calcc = calculateRates(pr);
+
+						
+						pr.forEach((e,c) => {
+							let grandParentRows = e.getElementsByTagName('tbody')[0];
+							const tablerow = document.createElement('tr');
+
+							tablerow.classList.add("bg-white");
+							tablerow.style.fontWeight = '900';
+							grandParentRows.appendChild(tablerow)
+							const tabledatarow = document.createElement('td');
+							tabledatarow.innerText = 'Criteria Ratings';
+							tabledatarow.classList.add("p-1");
+							tabledatarow.setAttribute('width', '40%');
+							tablerow.append(tabledatarow)
+							for (let i = 1; i <= 5; i++) {
+								const rowdata = document.createElement('td');
+								rowdata.classList.add("text-center");
+								rowdata.innerText = calcc[c][0][i] ? calcc[c][0][i]+'%': '0%';
+								
+								tablerow.append(rowdata);
+								
+
+							}
+							console.log(grandParentRows);
+
 						})
 					}
-					
+
 				}
 			},
-			complete:function(){
+			complete: function() {
 				end_load()
 			}
 		})
 	}
-	$('#print-btn').click(function(){
+	$('#print-btn').click(function() {
 		start_load()
-		var ns =$('noscript').clone()
+		var ns = $('noscript').clone()
 		var content = $('#printable').html()
 		ns.append(content)
-		var nw = window.open("Report","_blank","width=900,height=700")
+		var nw = window.open("Report", "_blank", "width=900,height=700")
 		nw.document.write(ns.html())
 		nw.document.close()
 		nw.print()
-		setTimeout(function(){
+		setTimeout(function() {
 			nw.close()
 			end_load()
-		},750)
+		}, 750)
 	})
-	
+
 	const tablepdf = document.getElementById('pdftable');
 	const pdfton = document.getElementById('pdf-btn')
-	pdfton.addEventListener('click', function () {
-  // Create a new jsPDF instance
-  var doc = new jsPDF();
-  // Convert the HTML table to a PDF
-  doc.autoTable({ html: '#pdftable' });
+	pdfton.addEventListener('click', function() {
+		// Create a new jsPDF instance
+		var doc = new jsPDF();
+		// Convert the HTML table to a PDF
+		doc.autoTable({
+			html: '#pdftable'
+		});
 
-  // Attach the PDF to the download button
-  pdfton.href = doc.output('dataurlstring');
-  
-});
-// 	document.getElementById('pdf-btn').onclick = function() {
-// 		var containPDF = document.getElementById('Pdf-file');
-	
-// 	 var customize = {
-// 		margin: .5, 
-// 		filename: 'evaluation.pdf',
-// 		html2canvas: {scale:2},
-// 		jsPDF: {unit:'in',format: 'letter',orientation:'portrait'}
-// 	 };
-	
-// 	 html2pdf(containPDF, customize);
-// };
+		// Attach the PDF to the download button
+		pdfton.href = doc.output('dataurlstring');
+
+	});
+	// 	document.getElementById('pdf-btn').onclick = function() {
+	// 		var containPDF = document.getElementById('Pdf-file');
+
+	// 	 var customize = {
+	// 		margin: .5, 
+	// 		filename: 'evaluation.pdf',
+	// 		html2canvas: {scale:2},
+	// 		jsPDF: {unit:'in',format: 'letter',orientation:'portrait'}
+	// 	 };
+
+	// 	 html2pdf(containPDF, customize);
+	// };
+
+	function calculateRates(grandParentTables) {
+								let ratesArray = [];
+								let totalrr = [];
+								let newrateArray = [];
+								let gpt = [];
+
+
+								grandParentTables.forEach((e) => {
+									let grandParentRows = e.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
+									// const op = grandParentRows.length
+									// console.log(op);
+
+									console.log(e);
+									for (let i = 0; i < grandParentRows.length; i++) {
+										let rowRates = {};
+										let rowCells = grandParentRows[i].getElementsByTagName('td');
+
+										for (let j = 1; j < rowCells.length; j++) {
+											let rate = rowCells[j].getElementsByTagName('span')[0].textContent;
+											rowRates[j] = rate;
+										}
+										ratesArray.push(rowRates);
+									}
+									totalrr.push(...ratesArray, 'split here!');
+									ratesArray = [];
+								});
+
+								let totals = totalrr.reduce((accumulator, e) => {
+									if (e === 'split here!') {
+										accumulator.push([...newrateArray]);
+										newrateArray = [];
+									} else {
+										newrateArray.push(e);
+									}
+									return accumulator;
+
+								}, []).map((e) => {
+									let newobjss = {};
+									for (let i = 0; i < e.length; i++) {
+										const obj = e[i];
+										for (let key in obj) {
+											if (obj.hasOwnProperty(key) && obj[key] !== '-') {
+												if (!newobjss[key]) {
+													newobjss[key] = 0;
+												}
+												newobjss[key] += parseFloat(obj[key]);
+											}
+										}
+									}
+									return [newobjss];
+								});
+
+								grandParentTables.forEach((e, i) => {
+									let grandParentRows = e.getElementsByTagName('tbody')[0].getElementsByTagName('tr').length;
+									// console.log(grandParentRows);
+
+
+									for (let key in totals[i][0]) {
+										console.log(totals[i][0][key]);
+										// console.log(totals[i][0]);
+
+										totals[i][0][key] = totals[i][0][key] / grandParentRows;
+									}
+
+
+								})
+
+
+
+								console.log(totals);
+
+								return totals;
+							}
+							
 </script>

@@ -21,6 +21,8 @@
 <script type="text/javascript" src="assets/dist/js/virtual-select.min.js"></script>
 <script type="text/javascript" src="assets/dist/js/html2pdf.bundle.min.js"></script>
 
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
 <script>
 	$(document).ready(function(){
 	  $('.select2').select2({

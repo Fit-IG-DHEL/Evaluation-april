@@ -43,14 +43,16 @@
   <!-- Theme style -->
   <link rel="stylesheet" href="assets/dist/css/adminlte.min.css">
   <link rel="stylesheet" href="assets/dist/css/styles.css">
-	<script src="assets/plugins/jquery/jquery.min.js"></script>
+	<!-- <script src="assets/plugins/jquery/jquery.min.js"></script> -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <!-- jQuery UI 1.11.4 -->
-  <script src="assets/plugins/jquery-ui/jquery-ui.min.js"></script>
+  <!-- <script src="assets/plugins/jquery-ui/jquery-ui.min.js"></script> -->
+  <script src="https://code.jquery.com/ui/1.13.1/jquery-ui.min.js"></script>
  <!-- summernote -->
   <link rel="stylesheet" href="assets/plugins/summernote/summernote-bs4.min.css">
    <!-- Jquery-UI -->
    <link rel="stylesheet" type="text/css" href="assets/dist/css/virtual-select.min.css">
   <!-- multiselect gods  -->
-
-  
+<!-- iron man -->
+  <link rel="stylesheet" href="//code.jquery.com/ui/1.13.0/themes/smoothness/jquery-ui.css">
 </head>

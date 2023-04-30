@@ -45,6 +45,11 @@ if(isset($_GET['id'])){
 						$('#msg').html('<div class="alert alert-danger"><i class="fa fa-exclamation-triangle"></i> Subject Code already exist.</div>')
 						end_load()
 					}
+					else if(resp == 3){
+		
+		$('#msg').html('<div class="alert alert-danger"><i class="fa fa-exclamation-triangle"></i>The Input Field is Empty! </div>')
+		end_load()
+	}
 				}
 			})
 		})

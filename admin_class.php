@@ -299,8 +299,10 @@ class Action
 	{
 		extract($_POST);
 		$data = "";
+		$data_arr = Array();
 		foreach ($_POST as $k => $v) {
 			if (!in_array($k, array('id', 'user_ids')) && !is_numeric($k)) {
+				array_push($data_arr ,$v);
 				if (empty($data)) {
 					$data .= " $k='$v' ";
 				} else {
@@ -308,7 +310,11 @@ class Action
 				}
 			}
 		}
-		$chk = $this->db->query("SELECT * FROM subject_list where code = '$code' and id != '{$id}' ")->num_rows;
+		$chk = $this->db->query("SELECT * FROM subject_list where(`code` ='{$data_arr[0]}' and `subject`='{$data_arr[1]}') and id != '{$id}' ")->num_rows;
+
+		if(empty($data_arr[0]) || empty($data_arr[1])) {
+			return 3;
+		}
 		if ($chk > 0) {
 			return 2;
 		}
@@ -412,7 +418,10 @@ class Action
 			}
 		}
 		$chk = $this->db->query("SELECT * FROM academic_list where ( `year` ='{$data_arr[0]}' and `semester`='{$data_arr[1]}') and `id` != '{$id}' ")->num_rows;
-		
+		if(empty($data_arr[0])) {
+
+			return 3;
+		}
 		if($chk != 0) {
 			return 2;
 		}
@@ -938,7 +947,9 @@ class Action
 		extract($_POST);
 
 		$data = array();
-		//before query get answer
+	
+
+		
 		// SELECT * FROM evaluation_answers where evaluation_id in (SELECT evaluation_id FROM evaluation_list where academic_id = {$_SESSION['academic']['id']} and faculty_id = $faculty_id and subject_id = $subject_id and class_id = $class_id )
 		
 		$get = $this->db->query("SELECT * FROM evaluation_answers where evaluation_id in (SELECT evaluation_id FROM evaluation_list where academic_id = {$_SESSION['academic']['id']} and faculty_id = $faculty_id and subject_id = $subject_id)");

@@ -49,7 +49,7 @@ if(isset($_GET['id'])){
 					}
 					else if(resp == 3){
 		
-						$('#msg').html('<div class="alert alert-danger"><i class="fa fa-exclamation-triangle"></i> Do it Again! </div>')
+						$('#msg').html('<div class="alert alert-danger"><i class="fa fa-exclamation-triangle"></i> The Input Field is Empty! </div>')
 						end_load()
 					}
 					
