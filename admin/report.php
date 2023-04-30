@@ -90,7 +90,7 @@ function ordinal_suffix($num)
 							<tr class="bg-white">
 								<th>5.Strongly-agree</th>
 								<th>4.Agree </th>
-								<th>3.Uncertain </th>
+								<th>3.Neutral </th>
 								<th>2.Disagree </th>
 								<th>1.Strongly-disagree </th>
 							</tr>
@@ -98,11 +98,11 @@ function ordinal_suffix($num)
 
 							<tr class="bg-white" id="show-table" >
 
-								<td id="strongly-agree"></td>
-								<td id="agree"></td>
-								<td id="uncertain"></td>
-								<td id="disagree"></td>
-								<td id="strongly-disagree"></td>
+								<td id="strongly-agree">0%</td>
+								<td id="agree">0%</td>
+								<td id="uncertain">0%</td>
+								<td id="disagree">0%</td>
+								<td id="strongly-disagree">0%</td>
 							</tr>
 
 						</table>
@@ -147,10 +147,12 @@ function ordinal_suffix($num)
 				</td>
 
 			<?php endfor; ?>
-			</tr>
+		
 
 		<?php endwhile; ?>
+		<tr class="bg-white crit" style="font-weight: 900;"><td class="p-1" width="40%">Criteria Ratings</td><td class="text-center">0%</td><td class="text-center">0%</td><td class="text-center">0%</td><td class="text-center">0%</td><td class="text-center">0%</td></tr>
 		</tbody>
+
 		</table>
 	<?php endwhile; ?>
 			</div>
@@ -230,7 +232,6 @@ function ordinal_suffix($num)
 			success: function(resp) {
 
 
-				console.log(resp);
 				if (resp) {
 					resp = JSON.parse(resp)
 					
@@ -272,7 +273,7 @@ function ordinal_suffix($num)
 			var vars = [],
 				hash;
 			var data = $(this).attr('data-json')
-			console.log(data);
+			
 			data = JSON.parse(data)
 			var _href = location.href.slice(window.location.href.indexOf('?') + 1).split('&');
 			for (var i = 0; i < _href.length; i++) {
@@ -290,9 +291,6 @@ function ordinal_suffix($num)
 
 	function load_report($faculty_id, $subject_id, $class_id) {
 
-
-
-
 		if ($('#preloader2').length <= 0)
 			start_load()
 		$.ajax({
@@ -309,55 +307,40 @@ function ordinal_suffix($num)
 			},
 			success: function(resp) {
 				if (resp) {
-										const parsedResponse = JSON.parse(resp);
-										let numoftse = parsedResponse.tse;
-										let datass = parsedResponse.data;
+					const parsedResponse = JSON.parse(resp);
+					let numoftse = parsedResponse.tse;
+					let datass = parsedResponse.data;
 
 					const sumMap = new Map();
+
+					for (const key in datass) {
+					for (const subkey in datass[key]) {
+						const value = datass[key][subkey];
+						const sum = sumMap.get(subkey) || 0;
+						sumMap.set(subkey, sum + value);
+					}
+					}
+					// console.log( datass);
+					// Loop through each table and get the number of tr elements in each tbody
+					let totalquestions=0
+					const gp = document.querySelectorAll("#grand-parent")
+					gp.forEach(table => {
+					const tbodies = table.querySelector('tbody');
+						const trs = tbodies.querySelectorAll('tr');
+						totalquestions += (trs.length - 1)
 					
-
-					
-
-for (const key in datass) {
-  for (const subkey in datass[key]) {
-    const value = datass[key][subkey];
-    const sum = sumMap.get(subkey) || 0;
-    sumMap.set(subkey, sum + value);
-  }
-}
-console.log(sumMap);
-console.log( datass);
-// Loop through each table and get the number of tr elements in each tbody
-let totalquestions=0
-const gp = document.querySelectorAll("#grand-parent")
-gp.forEach(table => {
-  const tbodies = table.querySelector('tbody');
-  
-   
-    const trs = tbodies.querySelectorAll('tr');
-    totalquestions += trs.length
-    
-  
-});
-console.log(totalquestions);
-// Divide the value of sumMap into totalquestions
-let me = [];
-for (const [key, value] of sumMap) {
-  const avg = value / totalquestions;
-  console.log(`Average for ${key}: ${avg}`);
-me.push(`${avg}`)
-
-
-}
-const res = me.toFixed(2);
-
-document.getElementById("strongly-agree").innerText =  `${me[0]||0}%`;
-      document.getElementById("agree").innerText = `${me[1]||0}%`;
-      document.getElementById("uncertain").innerText = `${me[2]||0}%`;
-      document.getElementById("disagree").innerText = `${me[3]||0}%`;
-      document.getElementById("strongly-disagree").innerText = `${me[4]||0}%`;
-  
-
+					});
+					// console.log(totalquestions);
+					// Divide the value of sumMap into totalquestions
+					sumMap.forEach((value, key) => {
+						sumMap.set(key, parseFloat(value/ totalquestions).toFixed(2));
+					});
+					// console.log(me,'im meee!!');
+					document.getElementById("strongly-agree").innerText =  `${sumMap.get('5')||0}%`;
+					document.getElementById("agree").innerText = `${sumMap.get('4')|| 0}%`;
+					document.getElementById("uncertain").innerText = `${sumMap.get('3')|| 0}%`;
+					document.getElementById("disagree").innerText = `${sumMap.get('2')|| 0}%`;
+					document.getElementById("strongly-disagree").innerText = `${sumMap.get('1')||0}%`;
 
 					// console.log("get r : "+resp);
 					// console.log('numberofTSE: '+numoftse);
@@ -390,45 +373,27 @@ document.getElementById("strongly-agree").innerText =  `${me[0]||0}%`;
 
 
 							
-							
-
-							
-
-
-							
 						})
-
-
-
-						const pr = document.querySelectorAll('#grand-parent');
+						
+							const pr = document.querySelectorAll('#grand-parent');
+						console.log(pr[0],'prr');
 
 						let calcc = calculateRates(pr);
-
-						
+						console.log(calcc,'high im calcc');
 						pr.forEach((e,c) => {
+							
 							let grandParentRows = e.getElementsByTagName('tbody')[0];
-							const tablerow = document.createElement('tr');
-
-							tablerow.classList.add("bg-white");
-							tablerow.style.fontWeight = '900';
-							grandParentRows.appendChild(tablerow)
-							const tabledatarow = document.createElement('td');
-							tabledatarow.innerText = 'Criteria Ratings';
-							tabledatarow.classList.add("p-1");
-							tabledatarow.setAttribute('width', '40%');
-							tablerow.append(tabledatarow)
-							for (let i = 1; i <= 5; i++) {
-								const rowdata = document.createElement('td');
-								rowdata.classList.add("text-center");
-								rowdata.innerText = calcc[c][0][i] ? calcc[c][0][i]+'%': '0%';
-								
-								tablerow.append(rowdata);
-								
-
-							}
-							console.log(grandParentRows);
-
+							let critElement = grandParentRows.lastElementChild
+							let critTds = critElement.children
+							critTds.forEach((td,i) => {
+								if(!td.classList.contains('p-1')){
+									td.innerText = calcc[c][0][i] ? parseFloat(calcc[c][0][i]).toFixed(2)+'%': '0%';
+									console.log('low');
+								}
+							});
+						
 						})
+						
 					}
 
 				}
@@ -486,26 +451,25 @@ document.getElementById("strongly-agree").innerText =  `${me[0]||0}%`;
 								let newrateArray = [];
 								let gpt = [];
 
-
 								grandParentTables.forEach((e) => {
 									let grandParentRows = e.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
 									// const op = grandParentRows.length
 									// console.log(op);
-
-									console.log(e);
-									for (let i = 0; i < grandParentRows.length; i++) {
+									console.log(grandParentRows[0],'ee');
+									for (let i = 0; i < grandParentRows.length -1 ; i++) {
 										let rowRates = {};
 										let rowCells = grandParentRows[i].getElementsByTagName('td');
 
 										for (let j = 1; j < rowCells.length; j++) {
-											let rate = rowCells[j].getElementsByTagName('span')[0].textContent;
-											rowRates[j] = rate;
+											let rate = rowCells[j].getElementsByTagName('span')[0].textContent 
+											rowRates[j] = rate ;
 										}
 										ratesArray.push(rowRates);
 									}
 									totalrr.push(...ratesArray, 'split here!');
 									ratesArray = [];
 								});
+								console.log(totalrr, 'im totalrr');
 
 								let totals = totalrr.reduce((accumulator, e) => {
 									if (e === 'split here!') {
@@ -541,7 +505,7 @@ document.getElementById("strongly-agree").innerText =  `${me[0]||0}%`;
 										console.log(totals[i][0][key]);
 										// console.log(totals[i][0]);
 
-										totals[i][0][key] = totals[i][0][key] / grandParentRows;
+										totals[i][0][key] = totals[i][0][key] / (grandParentRows-1);
 									}
 
 
@@ -549,7 +513,7 @@ document.getElementById("strongly-agree").innerText =  `${me[0]||0}%`;
 
 
 
-								console.log(totals);
+								console.log(totals,' totals here');
 
 								return totals;
 							}

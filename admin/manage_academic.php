@@ -22,10 +22,22 @@ if(isset($_GET['id'])){
 	</div> -->
 
 	<div class="form-group"> <!-- Create the input field with auto-suggestion -->
-	<label for="year" class="control-label">Year:</label><input id="semester-year" name="semester-year" type="text" class="form-control"> 
+	<label for="year" class="control-label">Year:</label><input id="myYear" name="year" type="text" value='<?php if(isset($year))echo $year?>'class="form-control"> 
         <!-- Create a dropdown list for the suggestions -->
+        <style>
+
+            li{
+                cursor:pointer;
+                font-weight:bold;
+            }
+            li:hover{
+                color:hotpink!important;
+
+            }
+        </style>
         <div class="dropdown mt-2">
-            <ul id="suggestions"></ul>
+               
+            <ul style='list-style:none; margin:0;padding:0;'id="suggestions"></ul>
         </div>
     </div>
 	<!-- <div class="form-group">
@@ -66,7 +78,7 @@ if(isset($_GET['id'])){
 <?php echo isset($year) ? '<script> yearindatabse = "'.$year.'"</script>' : "<script> yearindatabse = ''</script>" ?>
 
 <script>
-	
+
 	$(document).ready(function(){
 		$('#manage-academic').submit(function(e){
 			e.preventDefault();
@@ -153,11 +165,11 @@ if(isset($_GET['id'])){
               
                 const item = document.createElement('li');
                 item.textContent = year;
-                
+                item.classList.add('dropdown-item');
                 dropdown.appendChild(item);
                 item.addEventListener('click', () => {
                     // Set the input field value to the selected year
-                    document.getElementById('semester-year').value = year;
+                    document.getElementById('myYear').value = year;
                     // Clear the dropdown menu
                     clearDropdown();
                 });
@@ -172,7 +184,7 @@ if(isset($_GET['id'])){
         }
 
         // Attach the suggestion function to the input field
-        const input = document.getElementById('semester-year');
+        const input = document.getElementById('myYear');
         input.addEventListener('input', suggestYears);
 
 
