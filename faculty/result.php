@@ -47,15 +47,35 @@ function ordinal_suffix($num){
 				<p class=""><b>Total Student Evaluated: <span id="tse"></span></b></p>
 			</div>
 				<fieldset class="border border-info p-2 w-100">
-				   <legend  class="w-auto">Rating Legend</legend>
-				   <p>5 = Strongly Agree, 4 = Agree, 3 = Neutral, 2 = Disagree, 1 = Strongly Disagree</p>
+				   <legend  class="w-auto">Overall Ratings</legend>
+				   <table class="table table-condensed wborder"  >
+
+							<tr class="bg-white">
+								<th>5.Strongly-agree</th>
+								<th>4.Agree </th>
+								<th>3.Neutral </th>
+								<th>2.Disagree </th>
+								<th>1.Strongly-disagree </th>
+							</tr>
+
+
+							<tr class="bg-white" id="show-table" >
+
+								<td id="strongly-agree">0%</td>
+								<td id="agree">0%</td>
+								<td id="uncertain">0%</td>
+								<td id="disagree">0%</td>
+								<td id="strongly-disagree">0%</td>
+							</tr>
+
+						</table>
 				</fieldset>
 				<?php 
 							$q_arr = array();
 						$criteria = $conn->query("SELECT * FROM criteria_list where id in (SELECT criteria_id FROM question_list where academic_id = {$_SESSION['academic']['id']} ) order by abs(order_by) asc ");
 						while($crow = $criteria->fetch_assoc()):
 					?>
-					<table class="table table-condensed wborder">
+					<table class="table table-condensed wborder" id='grand-parent'>
 						<thead>
 							<tr class="bg-gradient-secondary">
 								<th class=" p-1"><b><?php echo $crow['criteria'] ?></b></th>
@@ -65,6 +85,7 @@ function ordinal_suffix($num){
 								<th width="5%" class="text-center">4</th>
 								<th width="5%" class="text-center">5</th>
 							</tr>
+							
 						</thead>
 						<tbody class="tr-sortable">
 							<?php 
@@ -84,6 +105,7 @@ function ordinal_suffix($num){
 								<?php endfor; ?>
 							</tr>
 							<?php endwhile; ?>
+							<tr class="bg-white crit" style="font-weight: 900;"><td class="p-1" width="40%">Criteria Ratings</td><td class="text-center">0%</td><td class="text-center">0%</td><td class="text-center">0%</td><td class="text-center">0%</td><td class="text-center">0%</td></tr>
 						</tbody>
 					</table>
 					<?php endwhile; ?>
@@ -138,8 +160,10 @@ function ordinal_suffix($num){
 				end_load()
 			},
 			success:function(resp){
+				
 				if(resp){
 					resp = JSON.parse(resp)
+
 					if(Object.keys(resp).length <= 0 ){
 						$('#class-list').html('<a href="javascript:void(0)" class="list-group-item list-group-item-action disabled">No data to be display.</a>')
 					}else{
@@ -195,6 +219,42 @@ function ordinal_suffix($num){
 			},
 			success:function(resp){
 				if(resp){
+					const parsedResponse = JSON.parse(resp);
+					let numoftse = parsedResponse.tse;
+					let datass = parsedResponse.data;
+
+					const sumMap = new Map();
+
+					for (const key in datass) {
+					for (const subkey in datass[key]) {
+						const value = datass[key][subkey];
+						const sum = sumMap.get(subkey) || 0;
+						sumMap.set(subkey, sum + value);
+					}
+					}
+					// Loop through each table and get the number of tr elements in each tbody
+					let totalquestions=0
+					const gp = document.querySelectorAll("#grand-parent")
+					gp.forEach(table => {
+					const tbodies = table.querySelector('tbody');
+						const trs = tbodies.querySelectorAll('tr');
+						totalquestions += (trs.length - 1)
+					
+					});
+
+					// console.log(totalquestions);
+					// Divide the value of sumMap into totalquestions
+					sumMap.forEach((value, key) => {
+						sumMap.set(key, parseFloat(value/ totalquestions).toFixed(2));
+					});
+
+					// console.log(me,'im meee!!');
+					document.getElementById("strongly-agree").innerText =  `${sumMap.get('5')||0}%`;
+					document.getElementById("agree").innerText = `${sumMap.get('4')|| 0}%`;
+					document.getElementById("uncertain").innerText = `${sumMap.get('3')|| 0}%`;
+					document.getElementById("disagree").innerText = `${sumMap.get('2')|| 0}%`;
+					document.getElementById("strongly-disagree").innerText = `${sumMap.get('1')||0}%`;
+
 					resp = JSON.parse(resp)
 					if(Object.keys(resp).length <= 0){
 						$('.rates').text('')
@@ -207,10 +267,24 @@ function ordinal_suffix($num){
 						var data = resp.data
 						Object.keys(data).map(q=>{
 							Object.keys(data[q]).map(r=>{
-								console.log($('.rate_'+r+'_'+q),data[q][r])
-								$('.rate_'+r+'_'+q).text(data[q][r]+'%')
+								$('.rate_'+r+'_'+q).text(parseFloat(data[q][r].toFixed(2)) + '%')
 							})
 						})
+						const pr = document.querySelectorAll('#grand-parent');
+						let calcc = calculateRates(pr);
+						pr.forEach((e,c) => {
+							
+							let grandParentRows = e.getElementsByTagName('tbody')[0];
+							let critElement = grandParentRows.lastElementChild
+							let critTds = critElement.children
+							critTds.forEach((td,i) => {
+								if(!td.classList.contains('p-1')){
+									td.innerText = calcc[c][0][i] ? parseFloat(calcc[c][0][i]).toFixed(2)+'%': '0%';
+								}
+							});
+						
+						})
+
 					}
 					
 				}
@@ -234,4 +308,71 @@ function ordinal_suffix($num){
 			end_load()
 		},750)
 	})
+	function calculateRates(grandParentTables) {
+								let ratesArray = [];
+								let totalrr = [];
+								let newrateArray = [];
+								let gpt = [];
+
+								grandParentTables.forEach((e) => {
+									let grandParentRows = e.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
+									// const op = grandParentRows.length
+									// console.log(op);
+									for (let i = 0; i < grandParentRows.length -1 ; i++) {
+										let rowRates = {};
+										let rowCells = grandParentRows[i].getElementsByTagName('td');
+
+										for (let j = 1; j < rowCells.length; j++) {
+											let rate = rowCells[j].getElementsByTagName('span')[0].textContent 
+											rowRates[j] = rate ;
+										}
+										ratesArray.push(rowRates);
+									}
+									totalrr.push(...ratesArray, 'split here!');
+									ratesArray = [];
+								});
+								let totals = totalrr.reduce((accumulator, e) => {
+									if (e === 'split here!') {
+										accumulator.push([...newrateArray]);
+										newrateArray = [];
+									} else {
+										newrateArray.push(e);
+									}
+									return accumulator;
+
+								}, []).map((e) => {
+									let newobjss = {};
+									for (let i = 0; i < e.length; i++) {
+										const obj = e[i];
+										for (let key in obj) {
+											if (obj.hasOwnProperty(key) && obj[key] !== '-') {
+												if (!newobjss[key]) {
+													newobjss[key] = 0;
+												}
+												newobjss[key] += parseFloat(obj[key]);
+											}
+										}
+									}
+									return [newobjss];
+								});
+
+								grandParentTables.forEach((e, i) => {
+									let grandParentRows = e.getElementsByTagName('tbody')[0].getElementsByTagName('tr').length;
+									// console.log(grandParentRows);
+
+
+									for (let key in totals[i][0]) {
+										// console.log(totals[i][0]);
+
+										totals[i][0][key] = totals[i][0][key] / (grandParentRows-1);
+									}
+
+
+								})
+
+
+
+
+								return totals;
+							}
 </script>
